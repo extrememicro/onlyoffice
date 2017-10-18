@@ -16,6 +16,7 @@
  */
 package org.exoplatform.onlyoffice.rest;
 
+import java.net.InetAddress;
 import java.net.URI;
 import java.util.Map;
 import java.util.UUID;
@@ -463,15 +464,12 @@ public class EditorService implements ResourceContainer {
    * @return the client host
    */
   protected String getClientHost(HttpServletRequest request) {
-    String host = request.getHeader("X-Forwarded-Host");
-    if (isValidName(host)) {
-      return host;
+    String addr = request.getHeader("X-Forwarded-For");
+    try {
+      return InetAddress.getByName(addr).getHostName();
+    } catch (Exception e) {
     }
-    host = request.getRemoteHost();
-    if (isValidName(host)) {
-      return host;
-    }
-    return null;
+    return addr;
   }
 
   /**
